@@ -1,0 +1,23 @@
+{
+  "name": "partiibot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/travishorn/partiibot.git"
+  },
+  "keywords": [],
+  "author": "Travis Horn <travis@travishorn.com> (https://travishorn.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/travishorn/partiibot/issues"
+  },
+  "homepage": "https://github.com/travishorn/partiibot#readme",
+  "dependencies": {
+    "axios": "^0.25.0"
+  }
+}
