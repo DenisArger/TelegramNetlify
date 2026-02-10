@@ -1,20 +1,48 @@
 # partiibot
 
-Simple Telegram bot. Extensible and deployable immediately using Netlify.
+Телеграм-бот, разворачиваемый как Netlify Function. Проект реализует простой вебхук, принимает апдейты от Telegram, парсит команды и отвечает в чат. Архитектура предельно минималистична: одна serverless-функция, несколько утилитных модулей и один внешний API (Hashnode) для демонстрационной команды.
 
-[![Deploy to
-Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/travishorn/partiibot)
+## Что делает бот
 
-This is my entry into the [February 2022 Netlify x Hashnode
-Hackathon](https://townhall.hashnode.com/netlify-hackathon).
+- Принимает апдейты по вебхуку Netlify Function `update`.
+- Парсит текст сообщений на команду, имя бота и дополнительные аргументы.
+- Обрабатывает команды через `switch` и отправляет ответ в Telegram через Bot API.
+- Имеет пример интеграции с Hashnode (получение списка featured-постов).
 
-[Read about how I built this
-bot.](https://travishorn.com/building-a-telegram-bot-with-netlify)
+Команды по умолчанию:
 
-## Extending
+- `/echo [текст]` — отвечает тем, что вы передали (или `ECHO!`, если аргумент не задан).
+- `/hashnodefeatured` — присылает заголовки и авторов первых трёх featured-постов Hashnode и ссылку на список.
+- Любая другая команда — отвечает "I don't understand that command."
 
-Build in new commands that your bot can respond to by adding `case` statements
-to the `switch` statement in [netlify/functions/update.js](netlify/functions/update.js)
+## Структура и потоки
+
+- `netlify/functions/update.js` — точка входа: принимает `event.body`, достает `message`, выбирает команду и вызывает отправку ответа.
+- `messageParts.js` — разбирает текст сообщения на `command`, `botName`, `extra`.
+- `sendMessage.js` — обёртка над Telegram Bot API `sendMessage`.
+- `hashnode.js` — клиент Hashnode GraphQL (получение featured постов).
+
+Поток данных:
+
+1. Telegram → Netlify Function `update` (webhook).
+2. `messageParts` → определение команды.
+3. Выполнение команды → `sendMessage` → Telegram.
+
+## Настройка и запуск
+
+1. Задайте токен бота в переменной окружения `TELEGRAM_BOT_TOKEN`.
+2. Настройте вебхук Telegram на URL Netlify Function `/.netlify/functions/update`.
+3. Деплойте на Netlify (обычный deploy function, без сборки).
+
+Примечание: в `netlify.toml` сейчас используется переменная `BOT_TOKEN`. В коде ожидается `TELEGRAM_BOT_TOKEN`, поэтому при деплое лучше привести их к одному имени.
+
+## Расширение
+
+Добавляйте новые команды в `switch` внутри `netlify/functions/update.js`. Для примера, смотрите реализацию `echo` и `hashnodefeatured`.
+
+## Источники и контекст
+
+Проект создан как минимальный пример для хакатона Netlify x Hashnode (февраль 2022). Описание оригинального решения и подхода — в статье автора.
 
 ## License
 
