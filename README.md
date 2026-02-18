@@ -34,7 +34,7 @@
 2. Настройте вебхук Telegram на URL Netlify Function `/.netlify/functions/update`.
 3. Деплойте на Netlify (обычный deploy function, без сборки).
 
-Примечание: в `netlify.toml` сейчас используется переменная `BOT_TOKEN`. В коде ожидается `TELEGRAM_BOT_TOKEN`, поэтому при деплое лучше привести их к одному имени.
+Используйте только `TELEGRAM_BOT_TOKEN` (в коде и в `netlify.toml` имя переменной синхронизировано).
 
 ## Расширение
 
