@@ -1,4 +1,5 @@
 # partiibot
+[![CI](https://github.com/DenisArger/TelegramNetlify/actions/workflows/ci.yml/badge.svg)](https://github.com/DenisArger/TelegramNetlify/actions/workflows/ci.yml)
 
 ## English
 
