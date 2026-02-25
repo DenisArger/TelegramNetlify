@@ -1,68 +1,99 @@
 # partiibot
 
-Телеграм-бот, разворачиваемый как Netlify Function. Проект реализует простой вебхук, принимает апдейты от Telegram, парсит команды и отвечает в чат. Архитектура предельно минималистична: одна serverless-функция, несколько утилитных модулей и один внешний API (Hashnode) для демонстрационной команды.
+## English
 
-## Что делает бот
+## Problem
+Teams often need a minimal Telegram bot webhook that can be deployed quickly without maintaining a dedicated server.
 
-- Принимает апдейты по вебхуку Netlify Function `update`.
-- Парсит текст сообщений на команду, имя бота и дополнительные аргументы.
-- Обрабатывает команды через `switch` и отправляет ответ в Telegram через Bot API.
-- Имеет пример интеграции с Hashnode (получение списка featured-постов).
+## Solution
+`partiibot` is a Netlify Function-based Telegram bot: it receives webhook updates, parses commands, and replies through Telegram Bot API.
 
-Команды по умолчанию:
+## Tech Stack
+- Node.js
+- JavaScript (CommonJS)
+- Telegram Bot API
+- Netlify Functions
+- Axios
 
-- `/echo [текст]` — отвечает тем, что вы передали (или `ECHO!`, если аргумент не задан).
-- `/hashnodefeatured` — присылает заголовки и авторов первых трёх featured-постов Hashnode и ссылку на список.
-- Любая другая команда — отвечает "I don't understand that command."
+## Architecture
+Top-level structure:
+```text
+netlify/functions/update.js
+messageParts.js
+sendMessage.js
+hashnode.js
+netlify.toml
+```
 
-## Структура и потоки
+```mermaid
+flowchart TD
+  A[Telegram Webhook] --> B[Netlify Function update]
+  B --> C[messageParts]
+  C --> D[Command Switch]
+  D --> E[sendMessage -> Telegram API]
+  D --> F[hashnode API call]
+```
 
-- `netlify/functions/update.js` — точка входа: принимает `event.body`, достает `message`, выбирает команду и вызывает отправку ответа.
-- `messageParts.js` — разбирает текст сообщения на `command`, `botName`, `extra`.
-- `sendMessage.js` — обёртка над Telegram Bot API `sendMessage`.
-- `hashnode.js` — клиент Hashnode GraphQL (получение featured постов).
+## Features
+- Webhook-based Telegram command processing
+- Command parsing (`/echo`, `/hashnodefeatured`)
+- External API integration example (Hashnode)
+- Simple function-first deployment model
 
-Поток данных:
+## How to Run
+```bash
+npm install
+cp .env.example .env
+npx netlify dev
+```
 
-1. Telegram → Netlify Function `update` (webhook).
-2. `messageParts` → определение команды.
-3. Выполнение команды → `sendMessage` → Telegram.
+Required environment variable: `TELEGRAM_BOT_TOKEN`.
 
-## Настройка и запуск
+## Русский
 
-1. Задайте токен бота в переменной окружения `TELEGRAM_BOT_TOKEN`.
-2. Настройте вебхук Telegram на URL Netlify Function `/.netlify/functions/update`.
-3. Деплойте на Netlify (обычный deploy function, без сборки).
+## Проблема
+Командам часто нужен минимальный Telegram webhook-бот, который можно быстро задеплоить без отдельного сервера.
 
-Используйте только `TELEGRAM_BOT_TOKEN` (в коде и в `netlify.toml` имя переменной синхронизировано).
+## Решение
+`partiibot` — это Telegram-бот на Netlify Functions: принимает webhook-апдейты, парсит команды и отвечает через Telegram Bot API.
 
-## Расширение
+## Стек
+- Node.js
+- JavaScript (CommonJS)
+- Telegram Bot API
+- Netlify Functions
+- Axios
 
-Добавляйте новые команды в `switch` внутри `netlify/functions/update.js`. Для примера, смотрите реализацию `echo` и `hashnodefeatured`.
+## Архитектура
+Верхнеуровневая структура:
+```text
+netlify/functions/update.js
+messageParts.js
+sendMessage.js
+hashnode.js
+netlify.toml
+```
 
-## Источники и контекст
+```mermaid
+flowchart TD
+  A[Telegram Webhook] --> B[Netlify Function update]
+  B --> C[messageParts]
+  C --> D[Switch по командам]
+  D --> E[sendMessage -> Telegram API]
+  D --> F[Запрос к Hashnode API]
+```
 
-Проект создан как минимальный пример для хакатона Netlify x Hashnode (февраль 2022). Описание оригинального решения и подхода — в статье автора.
+## Возможности
+- Обработка Telegram-команд через webhook
+- Парсинг команд (`/echo`, `/hashnodefeatured`)
+- Пример интеграции с внешним API (Hashnode)
+- Простой serverless-подход к деплою
 
-## License
+## Как запустить
+```bash
+npm install
+cp .env.example .env
+npx netlify dev
+```
 
-The MIT License (MIT)
-
-Copyright © 2022 Travis Horn
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the “Software”), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software is furnished to do so,
-subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+Обязательная переменная окружения: `TELEGRAM_BOT_TOKEN`.
